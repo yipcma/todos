@@ -50,7 +50,29 @@ if (Meteor.isClient) {
           }
         });
       }
+    },
+    'change [type=checkbox]': function(){
+      var documentId = this._id;
+      var isCompleted = this.completed;
+      if(isCompleted){
+        Todos.update({_id: documentId}, {$set: {completed: false}});
+        console.log("marked false");
+      } else {
+        Todos.update({_id: documentId}, {$set: {completed: true}});
+        console.log("marked true");
+      }
     }
+  });
+  
+  Template.todoItem.helpers({
+    'checked': function(){
+      var isCompleted = this.completed;
+      if(isCompleted){
+        return "checked";
+      } else {
+        return "";
+      }
+      }
   });
 }
 
