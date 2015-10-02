@@ -56,10 +56,8 @@ if (Meteor.isClient) {
       var isCompleted = this.completed;
       if(isCompleted){
         Todos.update({_id: documentId}, {$set: {completed: false}});
-        console.log("marked false");
       } else {
         Todos.update({_id: documentId}, {$set: {completed: true}});
-        console.log("marked true");
       }
     }
   });
@@ -73,6 +71,15 @@ if (Meteor.isClient) {
         return "";
       }
       }
+  });
+  
+  Template.todosCount.helpers({
+    'totalTodos': function(){
+      return Todos.find().count();
+    },
+    'completedTodos': function(){
+      return Todos.find({completed: true}).count();
+    }
   });
 }
 
