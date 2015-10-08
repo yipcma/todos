@@ -212,7 +212,10 @@ if (Meteor.isClient) {
           console.log(error.reason);
         }
         else {
-          Router.go("home");
+          var currentRoute = Router.current().route.getName();
+          if (currentRoute == "login") {
+            Router.go("home");
+          }
         }
       });
     }
