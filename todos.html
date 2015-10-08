@@ -1,10 +1,3 @@
-<!--<head>-->
-<!--  <title>Todos</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--  {{> todos}}-->
-<!--</body>-->
-
 <template name="todos">
   {{> addTodo}}
   <ul>
@@ -54,6 +47,7 @@
 
 <template name="listPage">
   <h2>Tasks: {{name}}</h2>
+  {{> todos}}
 </template>
 
 <template name="main">

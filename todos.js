@@ -16,16 +16,21 @@ Router.route('/login');
 
 Router.route('/list/:_id', {
   template: 'listPage',
-  data: function(){
+  data: function() {
     var currentList = this.params._id;
-    return Lists.findOne({_id: currentList});
+    return Lists.findOne({
+      _id: currentList
+    });
   }
 });
 
 if (Meteor.isClient) {
   Template.todos.helpers({
     'todo': function() {
-      return Todos.find({}, {
+      var currentList = this._id;
+      return Todos.find({
+        listId: currentList
+      }, {
         sort: {
           createdAt: -1
         }
@@ -37,10 +42,12 @@ if (Meteor.isClient) {
     'submit form': function(event) {
       event.preventDefault();
       var todoName = $('[name="todoName"]').val(); // note the use of jQuery here
+      var currentList = this._id;
       Todos.insert({
         name: todoName,
         completed: false,
-        createdAt: new Date()
+        createdAt: new Date(),
+        listId: currentList
       });
       $('[name="todoName"]').val('');
     }
@@ -73,39 +80,55 @@ if (Meteor.isClient) {
         });
       }
     },
-    'change [type=checkbox]': function(){
+    'change [type=checkbox]': function() {
       var documentId = this._id;
       var isCompleted = this.completed;
-      if(isCompleted){
-        Todos.update({_id: documentId}, {$set: {completed: false}});
-      } else {
-        Todos.update({_id: documentId}, {$set: {completed: true}});
+      if (isCompleted) {
+        Todos.update({
+          _id: documentId
+        }, {
+          $set: {
+            completed: false
+          }
+        });
+      }
+      else {
+        Todos.update({
+          _id: documentId
+        }, {
+          $set: {
+            completed: true
+          }
+        });
       }
     }
   });
 
   Template.todoItem.helpers({
-    'checked': function(){
+    'checked': function() {
       var isCompleted = this.completed;
-      if(isCompleted){
+      if (isCompleted) {
         return "checked";
-      } else {
+      }
+      else {
         return "";
       }
-      }
+    }
   });
 
   Template.todosCount.helpers({
-    'totalTodos': function(){
+    'totalTodos': function() {
       return Todos.find().count();
     },
-    'completedTodos': function(){
-      return Todos.find({completed: true}).count();
+    'completedTodos': function() {
+      return Todos.find({
+        completed: true
+      }).count();
     }
   });
 
   Template.addList.events({
-    'submit form': function(event){
+    'submit form': function(event) {
       event.preventDefault();
       var listName = $('[name=listName]').val();
       Lists.insert({
@@ -116,8 +139,12 @@ if (Meteor.isClient) {
   });
 
   Template.lists.helpers({
-    'list': function(){
-      return Lists.find({}, {sort: {name: 1}});
+    'list': function() {
+      return Lists.find({}, {
+        sort: {
+          name: 1
+        }
+      });
     }
   });
 
