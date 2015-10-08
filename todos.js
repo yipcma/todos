@@ -1,6 +1,10 @@
 Todos = new Mongo.Collection('todos');
 Lists = new Mongo.Collection('lists');
 
+Router.configure({
+  layoutTemplate: "main"
+});
+
 Router.route('/', {
   name: "home",
   tempalte: "home"
@@ -10,8 +14,9 @@ Router.route('/register');
 
 Router.route('/login');
 
-Router.configure({
-  layoutTemplate: "main"
+Router.route('/list/:_id', {
+  data: function(){
+  }
 });
 
 if (Meteor.isClient) {
