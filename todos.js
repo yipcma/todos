@@ -139,8 +139,10 @@ if (Meteor.isClient) {
       var listName = $('[name=listName]').val();
       Lists.insert({
         name: listName
-      }, function(error, results){
-        Router.go('listPage', {_id: results});
+      }, function(error, results) {
+        Router.go('listPage', {
+          _id: results
+        });
       });
       $('[name=listName]').val('');
     }
@@ -157,7 +159,7 @@ if (Meteor.isClient) {
   });
 
   Template.register.events({
-    'submit form': function(event){
+    'submit form': function(event) {
       event.preventDefault();
       var email = $('[name=email]').val();
       var password = $('[name=password]').val();
@@ -166,6 +168,23 @@ if (Meteor.isClient) {
         password: password
       });
       Router.go('home');
+    }
+  });
+
+  Template.navigation.events({
+    'click .logout': function(event) {
+      event.preventDefault();
+      Meteor.logout();
+      Router.go('login');
+    }
+  });
+
+  Template.login.events({
+    'submit form': function(event) {
+      event.preventDefault();
+      var email = $('[name=email]').val();
+      var password = $('[name=password]').val();
+      Meteor.loginWithPassword(email, password);
     }
   });
 }
