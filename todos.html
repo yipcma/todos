@@ -10,7 +10,7 @@
   <ul>
   {{#each todo}}
     {{> todoItem}}
-  {{/each}}  
+  {{/each}}
   </ul>
   {{> todosCount}}
 </template>
@@ -36,9 +36,26 @@
   {{/if}}
 </template>
 
+<template name="addList">
+  <form>
+    <input type="text" placeholder="List name here..." name="listName"/>
+  </form>
+</template>
+
+<template name="lists">
+  <h2>Lists</h2>
+  {{> addList}}
+  <ul>
+    {{#each list}}
+      <li>{{name}}</li>
+    {{/each}}
+  </ul>
+</template>
+
 <template name="main">
   <h1>Todos</h1>
   {{> navigation}}
+  {{> lists}}
   {{> yield}}
   <hr />
   <p>Copyright &copy; Todos, 2015.</p>

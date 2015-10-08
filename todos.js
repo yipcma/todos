@@ -1,4 +1,5 @@
 Todos = new Mongo.Collection('todos');
+Lists = new Mongo.Collection('lists');
 
 Router.route('/', {
   name: "home",
@@ -74,7 +75,7 @@ if (Meteor.isClient) {
       }
     }
   });
-  
+
   Template.todoItem.helpers({
     'checked': function(){
       var isCompleted = this.completed;
@@ -85,7 +86,7 @@ if (Meteor.isClient) {
       }
       }
   });
-  
+
   Template.todosCount.helpers({
     'totalTodos': function(){
       return Todos.find().count();
@@ -94,6 +95,24 @@ if (Meteor.isClient) {
       return Todos.find({completed: true}).count();
     }
   });
+
+  Template.addList.events({
+    'submit form': function(event){
+      event.preventDefault();
+      var listName = $('[name=listName]').val();
+      Lists.insert({
+        name: listName
+      });
+      $('[name=listName]').val('');
+    }
+  });
+
+  Template.lists.helpers({
+    'list': function(){
+      return Lists.find({}, {sort: {name: 1}});
+    }
+  });
+
 }
 
 if (Meteor.isServer) {
