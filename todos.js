@@ -62,15 +62,16 @@ if (Meteor.isClient) {
       event.preventDefault();
       var todoName = $('[name="todoName"]').val(); // note the use of jQuery here
       var currentList = this._id;
-      var currentUser = Meteor.userId();
-      Todos.insert({
-        name: todoName,
-        completed: false,
-        createdAt: new Date(),
-        listId: currentList,
-        createdBy: currentUser
+      Meteor.call('createListItem', todoName, currentList, function(error, results) {
+        if (error) {
+          console.log(error.reason);
+        }
+        else {
+          console.log(results);
+          $('[name="todoName"]').val('');
+        }
       });
-      $('[name="todoName"]').val('');
+
     }
   });
 
@@ -330,6 +331,22 @@ if (Meteor.isServer) {
         throw new Meteor.Error("not-loggedin");
       }
       return Lists.insert(data);
+    },
+    'createListItem': function(todoName, currentList) {
+      check(todoName, String);
+      check(currentList, String);
+      var currentUser = Meteor.userId();
+      var data = {
+        name: todoName,
+        completed: false,
+        createdAt: new Date(),
+        listId: currentList,
+        createdBy: currentUser
+      };
+      if (!currentUser) {
+        throw new Meteor.Error("not-logged-in");
+      }
+      return Todos.insert(data);
     }
   })
 }
