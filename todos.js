@@ -35,7 +35,8 @@ Router.route('/list/:_id', {
     }
   },
   subscriptions: function(){
-    return Meteor.subscribe("todos");
+    var currentList = this.params._id; //retreive id from the url
+    return Meteor.subscribe("todos", currentList);
   }
 });
 
@@ -287,8 +288,8 @@ if (Meteor.isServer) {
     return Lists.find({createdBy: currentUser});
   });
 
-  Meteor.publish('todos', function(){
+  Meteor.publish('todos', function(currentList){
     var currentUser = this.userId;
-    return Todos.find({createdBy: currentUser});
+    return Todos.find({createdBy: currentUser, listId: currentList});
   })
 }
