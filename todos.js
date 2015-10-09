@@ -295,6 +295,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     'createNewList': function(listName){
       var currentUser = Meteor.userId();
+      check(listName, String);
       var data = {
         name: listName,
         createdBy: currentUser
