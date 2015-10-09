@@ -80,11 +80,11 @@ if (Meteor.isClient) {
       event.preventDefault();
       var documentId = this._id;
       var confirm = window.confirm("Delete this task?");
-      if (confirm) {
-        Todos.remove({
-          _id: documentId
-        });
-      }
+      Meteor.call('removeListItem', documentId, confirm, function(error, results) {
+        if (error) {
+          console.log(error.reason);
+        }
+      });
     },
     'keyup [name=todoItem]': function(event) {
       if (event.which == 13 || event.which == 27) {
@@ -368,6 +368,19 @@ if (Meteor.isServer) {
           completed: newStatus
         }
       });
+    },
+    'removeListItem': function(documentId, confirm) {
+      check(documentId, String);
+      check(confirm, Boolean);
+      var currentUser = Meteor.userId();
+      if (!currentUser) {
+        throw new Meteor.Error("not-logged-in");
+      }
+      if (confirm) {
+        return Todos.remove({
+          _id: documentId
+        });
+      }
     }
   })
 }
