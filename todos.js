@@ -80,11 +80,13 @@ if (Meteor.isClient) {
       event.preventDefault();
       var documentId = this._id;
       var confirm = window.confirm("Delete this task?");
-      Meteor.call('removeListItem', documentId, confirm, function(error, results) {
-        if (error) {
-          console.log(error.reason);
-        }
-      });
+      if (confirm) {
+        Meteor.call('removeListItem', documentId, confirm, function(error, results) {
+          if (error) {
+            console.log(error.reason);
+          }
+        });
+      }
     },
     'keyup [name=todoItem]': function(event) {
       if (event.which == 13 || event.which == 27) {
@@ -331,6 +333,11 @@ if (Meteor.isServer) {
       if (!currentUser) {
         throw new Meteor.Error("not-logged-in");
       }
+
+      var currentList = Lists.findOne(currentList);
+      if (currentList.createdBy != currentUser) {
+        throw new Meteor.Error("invalid-user", "You don't own that list.");
+      }
       return Todos.insert(data);
     },
     'updateListItem': function(documentId, todoItem) {
@@ -341,7 +348,8 @@ if (Meteor.isServer) {
         throw new Meteor.Error("not-logged-in");
       }
       return Todos.update({
-        _id: documentId
+        _id: documentId,
+        createdBy: currentUser
       }, {
         $set: {
           name: todoItem
@@ -362,7 +370,8 @@ if (Meteor.isServer) {
         var newStatus = true;
       }
       return Todos.update({
-        _id: documentId
+        _id: documentId,
+        createdBy: currentUser
       }, {
         $set: {
           completed: newStatus
@@ -376,11 +385,10 @@ if (Meteor.isServer) {
       if (!currentUser) {
         throw new Meteor.Error("not-logged-in");
       }
-      if (confirm) {
-        return Todos.remove({
-          _id: documentId
-        });
-      }
+      return Todos.remove({
+        _id: documentId,
+        createdBy: currentUser
+      });
     }
   })
 }
