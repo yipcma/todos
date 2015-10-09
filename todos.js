@@ -103,24 +103,11 @@ if (Meteor.isClient) {
     'change [type=checkbox]': function() {
       var documentId = this._id;
       var isCompleted = this.completed;
-      if (isCompleted) {
-        Todos.update({
-          _id: documentId
-        }, {
-          $set: {
-            completed: false
-          }
-        });
-      }
-      else {
-        Todos.update({
-          _id: documentId
-        }, {
-          $set: {
-            completed: true
-          }
-        });
-      }
+      Meteor.call('changeItemStatus', documentId, isCompleted, function(error, results) {
+        if (error) {
+          console.log(error.reason);
+        }
+      });
     }
   });
 
@@ -358,6 +345,27 @@ if (Meteor.isServer) {
       }, {
         $set: {
           name: todoItem
+        }
+      });
+    },
+    'changeItemStatus': function(documentId, isCompleted) {
+      check(documentId, String);
+      check(isCompleted, Boolean);
+      var currentUser = Meteor.userId();
+      if (!currentUser) {
+        throw new Meteor.Error("not-logged-in");
+      }
+      if (isCompleted) {
+        var newStatus = false;
+      }
+      else {
+        var newStatus = true;
+      }
+      return Todos.update({
+        _id: documentId
+      }, {
+        $set: {
+          completed: newStatus
         }
       });
     }
