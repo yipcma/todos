@@ -226,7 +226,18 @@ if (Meteor.isClient) {
   // });
 
   Template.login.onRendered(function(){
-    $('.login').validate();
+    $('.login').validate({
+      rules: {
+        email: {
+          required: true,
+          email: true
+        },
+        password: {
+          required: true,
+          minlength: 6
+        }
+      }
+    });
   });
 
   // Template.login.onDestroyed(function(){
