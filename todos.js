@@ -7,7 +7,10 @@ Router.configure({
 
 Router.route('/', {
   name: "home",
-  tempalte: "home"
+  template: "home",
+  subscriptions: function(){
+    return Meteor.subscribe("lists");
+  }
 });
 
 Router.route('/register');
@@ -36,13 +39,11 @@ Router.route('/list/:_id', {
   },
   subscriptions: function(){
     var currentList = this.params._id; //retreive id from the url
-    return Meteor.subscribe("todos", currentList);
+    return [Meteor.subscribe("lists"), Meteor.subscribe("todos", currentList)];
   }
 });
 
 if (Meteor.isClient) {
-  Meteor.subscribe('lists');
-
   Template.todos.helpers({
     'todo': function() {
       var currentList = this._id;
