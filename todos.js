@@ -93,11 +93,9 @@ if (Meteor.isClient) {
       else {
         var documentId = this._id;
         var todoItem = $(event.target).val();
-        Todos.update({
-          _id: documentId
-        }, {
-          $set: {
-            name: todoItem
+        Meteor.call('updateListItem', documentId, todoItem, function(error, results) {
+          if (error) {
+            console.log(error.reason);
           }
         });
       }
@@ -347,6 +345,21 @@ if (Meteor.isServer) {
         throw new Meteor.Error("not-logged-in");
       }
       return Todos.insert(data);
+    },
+    'updateListItem': function(documentId, todoItem) {
+      check(documentId, String);
+      check(todoItem, String);
+      var currentUser = Meteor.userId();
+      if (!currentUser) {
+        throw new Meteor.Error("not-logged-in");
+      }
+      return Todos.update({
+        _id: documentId
+      }, {
+        $set: {
+          name: todoItem
+        }
+      });
     }
   })
 }
