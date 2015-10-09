@@ -299,6 +299,9 @@ if (Meteor.isServer) {
         name: listName,
         createdBy: currentUser
       };
+      if(!currentUser){
+        throw new Meteor.Error("not-loggedin");
+      }
       Lists.insert(data);
     }
   })
