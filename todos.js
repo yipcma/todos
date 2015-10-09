@@ -277,6 +277,19 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+  function defaultName(currentUser) {
+    var nextLetter = 'A'
+    var nextName = 'List ' + nextLetter;
+    while (Lists.findOne({
+        name: nextName,
+        createdBy: currentUser
+      })) {
+      nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
+      nextName = 'List ' + nextLetter;
+    }
+    return nextName;
+  }
+
   Meteor.publish('lists', function() {
     var currentUser = this.userId;
     return Lists.find({
@@ -293,14 +306,17 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
-    'createNewList': function(listName){
+    'createNewList': function(listName) {
       var currentUser = Meteor.userId();
       check(listName, String);
+      if (listName == "") {
+        listName = defaultName(currentUser);
+      }
       var data = {
         name: listName,
         createdBy: currentUser
       };
-      if(!currentUser){
+      if (!currentUser) {
         throw new Meteor.Error("not-loggedin");
       }
       Lists.insert(data);
