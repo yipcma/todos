@@ -25,11 +25,12 @@ Router.route('/list/:_id', {
       createdBy: currentUser
     });
   },
-  onBeforeAction: function(){
+  onBeforeAction: function() {
     var currentUser = Meteor.userId();
     if (currentUser) {
       this.next();
-    } else{
+    }
+    else {
       this.render("login");
     }
   }
@@ -167,7 +168,9 @@ if (Meteor.isClient) {
   Template.lists.helpers({
     'list': function() {
       var currentUser = Meteor.userId();
-      return Lists.find({createdBy: currentUser}, {
+      return Lists.find({
+        createdBy: currentUser
+      }, {
         sort: {
           name: 1
         }
@@ -225,7 +228,7 @@ if (Meteor.isClient) {
   //   console.log("The 'login' template was just called");
   // });
 
-  Template.login.onRendered(function(){
+  Template.login.onRendered(function() {
     $('.login').validate({
       rules: {
         email: {
@@ -235,6 +238,16 @@ if (Meteor.isClient) {
         password: {
           required: true,
           minlength: 6
+        }
+      },
+      messages: {
+        email: {
+          required: "You must enter an email address.",
+          email: "You've entered an invalid email address."
+        },
+        password: {
+          required: "You must enter a password.",
+          minlength: "Your password must be at least {0} characters." // note use of placeholder
         }
       }
     });
