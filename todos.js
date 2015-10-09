@@ -37,6 +37,8 @@ Router.route('/list/:_id', {
 });
 
 if (Meteor.isClient) {
+  Meteor.subscribe('lists');
+
   Template.todos.helpers({
     'todo': function() {
       var currentList = this._id;
@@ -277,5 +279,8 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-
+  Meteor.publish('lists', function(){
+    var currentUser = this.userId;
+    return Lists.find({createdBy: currentUser});
+  });
 }
